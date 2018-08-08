@@ -1,5 +1,4 @@
 void setup() {
-  Serial.begin(9600);
   pinMode(7, INPUT_PULLUP);
   pinMode(8, OUTPUT);
   pinMode(9, OUTPUT);
@@ -8,7 +7,8 @@ void setup() {
   pinMode(12, OUTPUT);
 }
 
-long time = 0;
+bool low_signal = true; 
+byte count_low_signal = 0;
 bool ON = true;
 const byte LED_NUM = 5;
 byte LED_COUNT = 0;
@@ -24,9 +24,10 @@ void LEDControl(){
 }
 
 void loop() {
-  if((millis()-time)>=50 && !digitalRead(7)){
+  if (!low_signal && digitalRead(7) && count_low_signal++ >= 100) low_signal = true; 
+  if (low_signal && !digitalRead(7)) {
     LEDControl();
-    while(!digitalRead(7));
-    time = millis();
-  }
+    low_signal = false; 
+    count_low_signal = 0; 
+  } 
 }
